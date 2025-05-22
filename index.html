@@ -343,6 +343,13 @@
       font-size: 1.1rem;
       margin-bottom: 10px;
       text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .project-title:hover {
+      color: var(--primary);
+      text-shadow: 0 0 10px var(--glow);
     }
 
     .project-tech {
@@ -355,6 +362,33 @@
       color: var(--text-secondary);
       font-size: 0.9rem;
       line-height: 1.5;
+    }
+
+    .project-links {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .project-link {
+      padding: 6px 16px;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 20px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .project-link:hover {
+      background: rgba(0, 255, 136, 0.2);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 255, 136, 0.2);
     }
 
     /* Experience Timeline */
@@ -447,6 +481,7 @@
       .social-links { flex-direction: column; align-items: center; }
       .skills-grid { grid-template-columns: 1fr; }
       .projects-grid { grid-template-columns: 1fr; }
+      .project-links { flex-wrap: wrap; }
     }
 
     /* Scroll Progress */
@@ -578,12 +613,22 @@
               <div class="project-description">
                 Designed and developed a mobile task manager app with a clean multi-tab navigation structure. Implemented responsive UI with CSS-based styling and reusable components. Demonstrated strong understanding of React's component hierarchy by passing props from child to parent. Focused on intuitive layouts and scalable, maintainable design.
               </div>
+              <div class="project-links">
+                <a href="https://github.com/asadbaiig/Task-Manager-App-React-Native-Expo-" target="_blank" class="project-link">
+                  View Code →
+                </a>
+              </div>
             </div>
             <div class="project-card">
               <div class="project-title">Caliber Locksmith Platform</div>
               <div class="project-tech">React • Node.js • Express.js • MongoDB</div>
               <div class="project-description">
                 Developed "Caliber Locksmith," a fully responsive and interactive website using React, Node.js, Express.js, and MongoDB. The project included designing a user-friendly interface, implementing secure user authentication, and integrating RESTful APIs for efficient client-server communication. I focused on creating a scalable and maintainable architecture while ensuring optimal performance. The website features dynamic content rendering and CRUD operations tailored to the locksmith business needs.
+              </div>
+              <div class="project-links">
+                <a href="https://github.com/asadbaiig/Caliber-Locksmith-Full-Stack-Web-Application" target="_blank" class="project-link">
+                  View Code →
+                </a>
               </div>
             </div>
             <div class="project-card">
@@ -592,12 +637,22 @@
               <div class="project-description">
                 Developed multiple Java applications in Eclipse, applying object-oriented principles and modular design. Used JUnit for testing to ensure code reliability. Showcasing core Java concepts like inheritance, file handling, and exception management. Gained hands-on experience in writing testable, maintainable code.
               </div>
+              <div class="project-links">
+                <a href="https://github.com/asadbaiig/Java-Projects-with-JUnit-Eclipse-" target="_blank" class="project-link">
+                  View Code →
+                </a>
+              </div>
             </div>
             <div class="project-card">
               <div class="project-title">Simple Memory Game</div>
               <div class="project-tech">.NET • C# • MySQL • Windows Forms</div>
               <div class="project-description">
                 Developed a simple memory-matching game using C# and the .NET Framework with a focus on interactive gameplay and responsive UI. Integrated a SQL database to store player scores and game history, enabling persistent data tracking. Demonstrated skills in Windows Forms development, database connectivity, and event-driven programming.
+              </div>
+              <div class="project-links">
+                <a href="https://github.com/asadbaiig/Memory-Game-CSharp" target="_blank" class="project-link">
+                  View Code →
+                </a>
               </div>
             </div>
             <div class="project-card">
@@ -653,7 +708,7 @@
 
     // Custom cursor
     const cursor = document.getElementById('cursor');
-    const interactiveElements = document.querySelectorAll('a, .section, .profile-pic, .skill-tag');
+    const interactiveElements = document.querySelectorAll('a, .section, .profile-pic, .skill-tag, .project-link');
 
     document.addEventListener('mousemove', (e) => {
       cursor.style.left = e.clientX + 'px';
