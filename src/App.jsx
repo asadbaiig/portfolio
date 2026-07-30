@@ -10,7 +10,8 @@ import DecryptedText from './DecryptedText.jsx';
 import BorderGlow from './BorderGlow.jsx';
 import SpotlightCard from './SpotlightCard.jsx';
 
-const resumeUrl = '/Asad_Baig_AI_Air.pdf';
+const baseUrl = import.meta.env.BASE_URL;
+const resumeUrl = `${baseUrl}Asad_Baig_AI_Air.pdf`;
 
 const certificates = [
   'Screenshot 2026-07-30 031701.png',
@@ -245,7 +246,7 @@ function Header() {
     <header className="header">
       <div className="profile-container">
         <ProfileCard
-          avatarUrl="/12.jpg"
+          avatarUrl={`${baseUrl}12.jpg`}
           name="Asad Baig"
           title="Software Engineer"
           className="hero-profile-card"
@@ -398,14 +399,14 @@ function App() {
               <p className="hover-note">Hover over a certificate for a pixel reveal, then click to open the full image.</p>
               <div className="cert-grid">
                 {certificates.map((file, index) => (
-                  <a className="cert-card" href={`/utils/${file}`} target="_blank" rel="noreferrer" key={file} aria-label={`Open certificate ${index + 1}`}>
+                  <a className="cert-card" href={`${baseUrl}utils/${file}`} target="_blank" rel="noreferrer" key={file} aria-label={`Open certificate ${index + 1}`}>
                     <PixelTransition
                       gridSize={10}
                       pixelColor="#00ff88"
                       animationStepDuration={0.32}
                       aspectRatio="75%"
                       className="certificate-pixel-transition"
-                      firstContent={<img className="cert-thumb" src={`/utils/${file}`} alt={`Certificate ${index + 1}`} loading="lazy" />}
+                      firstContent={<img className="cert-thumb" src={`${baseUrl}utils/${file}`} alt={`Certificate ${index + 1}`} loading="lazy" />}
                       secondContent={
                         <div className="cert-reveal">
                           <span>View</span>
@@ -426,6 +427,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 
