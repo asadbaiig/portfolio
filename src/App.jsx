@@ -28,7 +28,7 @@ const certificates = [
   },
   {
     file: 'Screenshot 2026-07-30 031805.png',
-    url: 'https://www.coursera.org/account/accomplishments/verify/M2I0447YIER4'
+    url: 'https://www.coursera.org/account/accomplishments/verify/OGEKL189R5L6'
   },
   {
     file: 'Screenshot 2026-07-30 031825.png',
@@ -36,7 +36,7 @@ const certificates = [
   },
   {
     file: 'Screenshot 2026-07-30 031845.png',
-    url: 'https://www.coursera.org/account/accomplishments/verify/OB7GPF1N9BWP'
+    url: 'https://www.coursera.org/account/accomplishments/specialization/O8Q9CPTAMKU3'
   },
   {
     file: 'Screenshot 2026-07-30 031904.png',
