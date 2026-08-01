@@ -14,14 +14,37 @@ const baseUrl = import.meta.env.BASE_URL;
 const resumeUrl = `${baseUrl}Asad_Baig_AI_Air.pdf`;
 
 const certificates = [
-  'Screenshot 2026-07-30 031701.png',
-  'Screenshot 2026-07-30 031727.png',
-  'Screenshot 2026-07-30 031746.png',
-  'Screenshot 2026-07-30 031805.png',
-  'Screenshot 2026-07-30 031825.png',
-  'Screenshot 2026-07-30 031845.png',
-  'Screenshot 2026-07-30 031904.png',
-  'Screenshot 2026-07-30 031928.png'
+  {
+    file: 'Screenshot 2026-07-30 031701.png',
+    url: 'https://www.coursera.org/account/accomplishments/verify/47SKQ0720PK0'
+  },
+  {
+    file: 'Screenshot 2026-07-30 031727.png',
+    url: 'https://www.coursera.org/account/accomplishments/verify/AHO9R3F5OVIZ'
+  },
+  {
+    file: 'Screenshot 2026-07-30 031746.png',
+    url: 'https://www.coursera.org/account/accomplishments/verify/FK26QWJ5R4ZX'
+  },
+  {
+    file: 'Screenshot 2026-07-30 031805.png',
+    url: 'https://www.coursera.org/account/accomplishments/verify/M2I0447YIER4'
+  },
+  {
+    file: 'Screenshot 2026-07-30 031825.png',
+    url: 'https://www.coursera.org/account/accomplishments/specialization/O8Q9CPTAMKU3'
+  },
+  {
+    file: 'Screenshot 2026-07-30 031845.png',
+    url: 'https://www.coursera.org/account/accomplishments/verify/OB7GPF1N9BWP'
+  },
+  {
+    file: 'Screenshot 2026-07-30 031904.png',
+    url: 'https://www.coursera.org/account/accomplishments/verify/OGEKL189R5L6'
+  },
+  {
+    file: 'Screenshot 2026-07-30 031928.png'
+  }
 ];
 
 const navItems = [
@@ -388,8 +411,8 @@ function App() {
                   <div className="timeline-title"><DecryptedText text="Bachelor of Software Engineering" animateOn="hover" sequential revealDirection="center" speed={26} className="decrypt-revealed" encryptedClassName="decrypt-encrypted" /></div>
                   <div className="timeline-period"><DecryptedText text="Air University Islamabad - 2022 - 2026" animateOn="hover" sequential revealDirection="start" speed={22} className="decrypt-revealed" encryptedClassName="decrypt-encrypted" /></div>
                   <div className="timeline-description">
-                    <p><DecryptedText text="Focused on modern software development practices, algorithm design, and system architecture." animateOn="hover" maxIterations={12} speed={38} characters="01&lt;&gt;[]{}#/AI-ML" className="decrypt-revealed" encryptedClassName="decrypt-encrypted" /></p>
-                    <p><DecryptedText text="Relevant coursework: Data Structures, Object-Oriented Programming, Database Systems, Web Technologies, AI/ML." animateOn="hover" maxIterations={14} speed={34} characters="01&lt;&gt;[]{}#/AI-ML" className="decrypt-revealed" encryptedClassName="decrypt-encrypted" /></p>
+                    <p><DecryptedText text="Focused on modern software development practices, algorithm design, and system architecture." animateOn="hover" sequential revealDirection="start" speed={18} characters="01<>[]{}#/AI-ML" className="decrypt-revealed" encryptedClassName="decrypt-encrypted" /></p>
+                    <p><DecryptedText text="Relevant coursework: Data Structures, Object-Oriented Programming, Database Systems, Web Technologies, AI/ML." animateOn="hover" sequential revealDirection="start" speed={16} characters="01<>[]{}#/AI-ML" className="decrypt-revealed" encryptedClassName="decrypt-encrypted" /></p>
                   </div>
                 </div>
               </div>
@@ -398,24 +421,27 @@ function App() {
             <Section id="certifications" title="Certifications">
               <p className="hover-note">Hover over a certificate for a pixel reveal, then click to open the full image.</p>
               <div className="cert-grid">
-                {certificates.map((file, index) => (
-                  <a className="cert-card" href={`${baseUrl}utils/${file}`} target="_blank" rel="noreferrer" key={file} aria-label={`Open certificate ${index + 1}`}>
-                    <PixelTransition
-                      gridSize={10}
-                      pixelColor="#00ff88"
-                      animationStepDuration={0.32}
-                      aspectRatio="75%"
-                      className="certificate-pixel-transition"
-                      firstContent={<img className="cert-thumb" src={`${baseUrl}utils/${file}`} alt={`Certificate ${index + 1}`} loading="lazy" />}
-                      secondContent={
-                        <div className="cert-reveal">
-                          <span>View</span>
-                          <strong>Certificate</strong>
-                        </div>
-                      }
-                    />
-                  </a>
-                ))}
+                {certificates.map((certificate, index) => {
+                  const imageUrl = `${baseUrl}utils/${certificate.file}`;
+                  return (
+                    <a className="cert-card" href={certificate.url ?? imageUrl} target="_blank" rel="noreferrer" key={certificate.file} aria-label={`Open certificate ${index + 1}`}>
+                      <PixelTransition
+                        gridSize={10}
+                        pixelColor="#00ff88"
+                        animationStepDuration={0.32}
+                        aspectRatio="75%"
+                        className="certificate-pixel-transition"
+                        firstContent={<img className="cert-thumb" src={imageUrl} alt={`Certificate ${index + 1}`} loading="lazy" />}
+                        secondContent={
+                          <div className="cert-reveal">
+                            <span>View</span>
+                            <strong>Certificate</strong>
+                          </div>
+                        }
+                      />
+                    </a>
+                  );
+                })}
               </div>
             </Section>
           </main>
