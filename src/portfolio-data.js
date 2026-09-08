@@ -46,25 +46,41 @@ const skillGroups = [
 const projects = [
   {
     title: 'SmartRent - Decentralized Rental Platform',
+    image: 'utils/1766772186301.jpeg',
+    imageAlt: 'SmartRent decentralized rental platform preview',
     badge: 'FYP',
     tech: 'TypeScript - React - Node.js - Solidity - MongoDB - Firebase - AI',
     description: 'Led development of a full-stack decentralized rental platform integrating web, backend, blockchain, and AI components. Built secure REST APIs, MongoDB data models, Firebase authentication, Solidity smart contracts, and TensorFlow rent prediction.',
     url: 'https://github.com/asadbaiig/SmartRent-Project'
   },
   {
+    title: 'Sales Forecasting',
+    tech: 'Python - Pandas - NumPy - Matplotlib',
+    description: 'Explored sales trends across countries and products, comparing historical demand with 2026 forecasts and visualizing uncertainty through confidence intervals.',
+    image: 'utils/forecast_Analysis/Forecast_Visualization_Top12_2026.png',
+    imageAlt: 'Historical sales and 2026 forecasts for twelve country and product combinations',
+    url: 'https://github.com/asadbaiig/Sales_Forecasting'
+  },
+  {
     title: 'RAG Chatbot - NLP',
+    image: 'utils/Screenshot 2026-07-29 014318.png',
+    imageAlt: 'RAG chatbot project preview',
     tech: 'FastAPI - Pinecone - Groq LLM - HuggingFace - LlamaIndex',
     description: 'Built a Retrieval-Augmented Generation chatbot for context-aware question answering with semantic search, vector embeddings, and fast LLaMA 3.1 inference through Groq.',
     url: 'https://github.com/asadbaiig/NLP-Chatbot'
   },
   {
     title: 'Weather Data Interpolation',
+    image: 'utils/1756290549045.jpeg',
+    imageAlt: 'Weather data interpolation project preview',
     tech: 'Python - Pandas - Matplotlib - Jupyter Notebook',
     description: 'Applied IDW and Kriging techniques to impute missing weather observations using nearby station data, then evaluated accuracy with MAE and residual analysis.',
     url: 'https://github.com/asadbaiig/Spatial-weather-interpolation-with-Kriging-IDW-for-Islamabad-weather'
   },
   {
     title: 'IDW-Based 3D LUT Generator',
+    image: 'utils/1758468196233.jpeg',
+    imageAlt: '3D LUT color interpolation project preview',
     tech: 'Python - OpenCV - NumPy',
     description: 'Built an interactive image application using IDW for 3D LUT generation, color transformation, real-time image processing, and visual inspection.',
     url: 'https://github.com/asadbaiig/IDW-Based-3D-LUT-Generator-Visualization-and-Image-Application'

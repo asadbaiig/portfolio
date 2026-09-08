@@ -18,18 +18,12 @@ export default function StartupIntro({ onComplete }) {
       preference.removeEventListener('change', finish);
     };
   }, [onComplete]);
-  return <div className="startup-intro">
-    <div className="startup-content">
-      <svg className="startup-circuit" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-        <path className="startup-trace" d="M10 35H35V10M85 10V35H110M110 85H85V110M35 110V85H10M0 60H35M85 60H120M60 0V35M60 85V120"/>
-        <rect className="startup-chip" x="35" y="35" width="50" height="50" rx="12"/>
-        <path className="startup-core" d="M48 68L60 48L72 68M53 61H67"/>
-        <circle cx="10" cy="35" r="3"/><circle cx="110" cy="85" r="3"/>
-      </svg>
-      <p className="startup-name">Asad Baig</p>
-      <p className="startup-caption">IDEAS. CODE. INTELLIGENCE.</p>
-      <div className="startup-line" aria-hidden="true"><span/></div>
+  return <div className="startup-intro" role="status" aria-label="Loading portfolio">
+    <div className="startup-orbit" aria-hidden="true">
+      <span className="startup-ring"/>
+      <span className="startup-ring startup-ring-inner"/>
+      <span className="startup-spark"/>
     </div>
-    <button className="startup-skip" onClick={() => onComplete(false)}>Skip intro <span aria-hidden="true">↗</span></button>
+    <button className="startup-skip" aria-label="Skip intro" title="Skip intro" onClick={() => onComplete(false)}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m8 5 7 7-7 7M19 5v14"/></svg></button>
   </div>;
 }
