@@ -2,13 +2,19 @@ import { useEffect, useRef } from 'react';
 import { baseUrl } from './portfolio-data.js';
 import { createAsciiRenderer } from './asciiRenderer.js';
 
-export default function AsciiScroll({ animated }) {
+export default function AsciiScroll({ animated, wireframe = false }) {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
   const photoRef = useRef(null);
   const phaseRef = useRef(0);
   const pointerRef = useRef({ x: 0, y: 0 });
   const pointerTargetRef = useRef({ x: 0, y: 0 });
+  const wireframeRef = useRef(wireframe);
+  const redrawRef = useRef(null);
+  useEffect(() => {
+    wireframeRef.current = wireframe;
+    redrawRef.current?.();
+  }, [wireframe]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -34,12 +40,13 @@ export default function AsciiScroll({ animated }) {
       pointerRef.current.x += (pointerTargetRef.current.x - pointerRef.current.x) * pointerEasing;
       pointerRef.current.y += (pointerTargetRef.current.y - pointerRef.current.y) * pointerEasing;
       if (moving) phaseRef.current += delta * (.16 + (1 - progress) * .2);
-      renderer.draw(ready ? progress : 0, phaseRef.current, pointerRef.current);
+      renderer.draw(ready ? progress : 0, phaseRef.current, wireframeRef.current, pointerRef.current);
       if (moving) schedule();
     };
     const schedule = () => {
       if (!frame && visible && !document.hidden && !lost) frame = requestAnimationFrame(draw);
     };
+    redrawRef.current = schedule;
     const suspend = () => { cancelAnimationFrame(frame); frame = 0; lastTime = 0; };
     const enter = event => { if(event.pointerType !== 'touch') { hovered = true; schedule(); } };
     const leave = () => { hovered = false; resetPointer(); };
@@ -77,6 +84,7 @@ export default function AsciiScroll({ animated }) {
     resize(); if(photo.complete) load();
     return () => {
       suspend(); observer.disconnect(); resizeObserver.disconnect(); renderer.dispose();
+      redrawRef.current = null;
       Object.entries(events).forEach(([name,listener]) => section.removeEventListener(name,listener));
       photo.removeEventListener('load',load);
       canvas.removeEventListener('webglcontextlost',contextLost);
@@ -86,7 +94,7 @@ export default function AsciiScroll({ animated }) {
     };
   }, [animated]);
 
-  return <div className="ascii-art" ref={sectionRef} tabIndex={0} role="img" aria-label="Asad Baig's interactive portrait. Hover, focus, or tap to assemble the photo from ASCII particles.">
+  return <div id="ascii-portrait" className="ascii-art" ref={sectionRef} tabIndex={0} role="img" aria-label={wireframe ? 'Wireframe view of the portrait particles. Hover, focus, or tap to see the tiles assemble.' : "Asad Baig's interactive portrait. Hover, focus, or tap to assemble the photo from ASCII particles."}>
     <span className="ascii-bracket ascii-bracket-top" aria-hidden="true">+</span>
     <canvas ref={canvasRef} aria-hidden="true"/>
     <img className="ascii-fallback" ref={photoRef} src={`${baseUrl}asad-mountains.jpeg`} alt="" fetchPriority="high"/>

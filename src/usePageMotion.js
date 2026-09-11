@@ -86,7 +86,7 @@ export default function usePageMotion(enabled, expanded) {
           play(element, Math.min(index * 65, 195));
         });
       }, { threshold: .12 });
-      document.querySelectorAll('.section-heading, .projects-grid .project-card, .skills-constellation, .cert-grid > a, .contact > *').forEach(element => {
+      document.querySelectorAll('.section-heading, .projects-grid .project-card, .skills-constellation, .cert-grid > a, .contact > .eyebrow, .contact > h2, .contact > .email-link').forEach(element => {
         if (!element.dataset.entered) observer.observe(element);
       });
     };

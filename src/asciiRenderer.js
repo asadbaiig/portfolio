@@ -40,19 +40,27 @@ export function createAsciiRenderer(canvas) {
   const fragment = `#version 300 es
     precision highp float;
     uniform sampler2D glyphAtlas, portrait;
-    uniform float grid, phase;
+    uniform float grid, wireframe, phase;
     in vec2 photoUV;
     in float morph, solid, spriteSize, glyphSize, tileSize, light;
     out vec4 color;
     void main() {
       vec2 delta=(gl_PointCoord-.5)*spriteSize;
+      if(wireframe>.5) {
+        // Show the actual square sprite bounds, following the same particle paths.
+        float edge=min(min(gl_PointCoord.x,1.-gl_PointCoord.x),min(gl_PointCoord.y,1.-gl_PointCoord.y));
+        float stroke=1.-smoothstep(.035,.035+fwidth(edge),edge);
+        if(stroke<.05) discard;
+        color=vec4(mix(vec3(.718,.627,1.),vec3(.588,.851,.824),morph),stroke*(.4+.6*light));
+        return;
+      }
       if(solid>0. && max(abs(delta.x),abs(delta.y))<=tileSize*.5) {
         vec2 uv=photoUV+delta/tileSize/grid;
         if(morph>.99 && length(uv-.5)>.5) discard;
         color=vec4(texture(portrait,uv).rgb,1.);
       } else if(glyphSize>.1 && max(abs(delta.x),abs(delta.y))<=glyphSize*.5) {
         vec2 uv=delta/glyphSize+.5;
-        float glyph=clamp(floor(light*7.+sin(phase*2.2+photoUV.x*18.+photoUV.y*13.)*.7),0.,7.);
+          float glyph=clamp(floor(light*7.+sin(phase*2.2+photoUV.x*18.+photoUV.y*13.)*.7),0.,7.);
         float alpha=texture(glyphAtlas,vec2((glyph+uv.x)/8.,uv.y)).a;
         if(alpha<.1) discard;
         vec3 ink=mix(vec3(.718,.627,1.),texture(portrait,photoUV).rgb,morph);
@@ -95,7 +103,7 @@ export function createAsciiRenderer(canvas) {
     });
     buffer=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buffer); gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
     [3,2,1].forEach((size,index) => { gl.enableVertexAttribArray(index); gl.vertexAttribPointer(index,size,gl.FLOAT,false,24,[0,12,20][index]); });
-    const uniforms = Object.fromEntries(['viewport','ratio','radius','progress','phase','grid','pointer','glyphAtlas','portrait'].map(name=>[name,gl.getUniformLocation(program,name)]));
+    const uniforms = Object.fromEntries(['viewport','ratio','radius','progress','phase','grid','pointer','glyphAtlas','portrait','wireframe'].map(name=>[name,gl.getUniformLocation(program,name)]));
     const texture = (unit, source) => {
       const item=gl.createTexture();textures.push(item);gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,item);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
@@ -119,8 +127,8 @@ export function createAsciiRenderer(canvas) {
         const ratio=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(width*ratio);canvas.height=Math.round(height*ratio);
         gl.viewport(0,0,canvas.width,canvas.height);gl.uniform2f(uniforms.viewport,width,height);gl.uniform1f(uniforms.ratio,ratio);gl.uniform1f(uniforms.radius,Math.min(width*.34,height*.36));
       },
-      draw(progress,phase,pointer={x:0,y:0}) {
-        gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.uniform1f(uniforms.progress,progress);gl.uniform1f(uniforms.phase,phase);gl.uniform2f(uniforms.pointer,pointer.x,pointer.y);gl.drawArrays(gl.POINTS,0,targets.length);
+      draw(progress,phase,wireframe=false,pointer={x:0,y:0}) {
+        gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.uniform1f(uniforms.progress,progress);gl.uniform1f(uniforms.phase,phase);gl.uniform2f(uniforms.pointer,pointer.x,pointer.y);gl.uniform1f(uniforms.wireframe,wireframe ? 1 : 0);gl.drawArrays(gl.POINTS,0,targets.length);
       }, dispose,
     };
   } catch (error) { dispose(); console.warn('ASCII GPU renderer unavailable',error); return null; }
