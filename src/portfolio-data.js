@@ -62,12 +62,13 @@ const projects = [
     url: 'https://github.com/asadbaiig/Sales_Forecasting'
   },
   {
-    title: 'RAG Chatbot - NLP',
-    image: 'utils/Screenshot 2026-07-29 014318.png',
-    imageAlt: 'RAG chatbot project preview',
-    tech: 'FastAPI - Pinecone - Groq LLM - HuggingFace - LlamaIndex',
-    description: 'Built a Retrieval-Augmented Generation chatbot for context-aware question answering with semantic search, vector embeddings, and fast LLaMA 3.1 inference through Groq.',
-    url: 'https://github.com/asadbaiig/NLP-Chatbot'
+    title: 'IDW-Based 3D LUT Generator',
+    comparison: 'utils/lut-demo/comparison.png',
+    image: 'utils/1758468196233.jpeg',
+    imageAlt: '3D LUT color interpolation project preview',
+    tech: 'Python - OpenCV - NumPy',
+    description: 'Built an interactive image application using IDW for 3D LUT generation, color transformation, real-time image processing, and visual inspection.',
+    url: 'https://github.com/asadbaiig/IDW-Based-3D-LUT-Generator-Visualization-and-Image-Application'
   },
   {
     title: 'Weather Data Interpolation',
@@ -78,12 +79,12 @@ const projects = [
     url: 'https://github.com/asadbaiig/Spatial-weather-interpolation-with-Kriging-IDW-for-Islamabad-weather'
   },
   {
-    title: 'IDW-Based 3D LUT Generator',
-    image: 'utils/1758468196233.jpeg',
-    imageAlt: '3D LUT color interpolation project preview',
-    tech: 'Python - OpenCV - NumPy',
-    description: 'Built an interactive image application using IDW for 3D LUT generation, color transformation, real-time image processing, and visual inspection.',
-    url: 'https://github.com/asadbaiig/IDW-Based-3D-LUT-Generator-Visualization-and-Image-Application'
+    title: 'RAG Chatbot - NLP',
+    image: 'utils/Screenshot 2026-07-29 014318.png',
+    imageAlt: 'RAG chatbot project preview',
+    tech: 'FastAPI - Pinecone - Groq LLM - HuggingFace - LlamaIndex',
+    description: 'Built a Retrieval-Augmented Generation chatbot for context-aware question answering with semantic search, vector embeddings, and fast LLaMA 3.1 inference through Groq.',
+    url: 'https://github.com/asadbaiig/NLP-Chatbot'
   },
   {
     title: 'Caliber Locksmith Platform',

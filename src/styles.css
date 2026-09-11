@@ -119,3 +119,140 @@
 
 .project-art.project-art-image{background:#fff;padding:8px}
 .project-art-image img{display:block;width:100%;height:100%;object-fit:contain}
+
+/* Featured work stays readable without motion; larger screens layer the cards on scroll. */
+.project-stack{display:flex;flex-direction:column;gap:32px}
+.project-stack-item{min-width:0}
+.project-chapter{display:flex;justify-content:space-between;padding:0 4px 12px;color:var(--muted);font-size:9px;letter-spacing:2px}
+.project-chapter>span:last-child{color:var(--violet)}
+.project-stack .project-card{display:grid;grid-template-columns:1.15fr 1fr;min-height:420px;border-radius:18px;background:#12131e;box-shadow:0 20px 60px #0004}
+.project-stack .project-art{height:100%;min-height:420px;border-bottom:0;border-right:1px solid var(--line)}
+.project-stack .project-art-image{padding:24px;background:radial-gradient(ellipse at center,#352e49,#171723)}
+.project-stack .project-art-image img{border-radius:8px}
+.project-stack .project-body{display:flex;flex-direction:column;justify-content:center;padding:36px}
+.project-stack .project-body h3{font-size:clamp(23px,2.3vw,32px);line-height:1.25;letter-spacing:-.8px}
+.project-stack .project-body>p:not(.eyebrow){font-size:13px;line-height:1.85}
+.project-stack .code-link{padding-top:20px;border-top:1px solid var(--line);font-size:12px}
+.additional-projects{margin-top:40px}
+@media(min-width:1000px) and (min-height:720px){
+  .project-stack.is-stacking{gap:100px;padding-bottom:32px}
+  .is-stacking .project-stack-item{position:sticky;top:calc(112px + var(--card-index)*16px)}
+  .is-stacking .project-card{transform-origin:50% 0;transition:border-color .3s,box-shadow .3s}
+  .is-stacking .project-card:hover{transform:none}
+  .is-stacking .project-stack-item:focus-within{z-index:5}
+}
+@media(max-width:999px){
+  .project-stack .project-card{grid-template-columns:1fr;min-height:0}
+  .project-stack .project-art{height:300px;min-height:0;border-right:0;border-bottom:1px solid var(--line)}
+  .project-stack .project-body{padding:28px}
+}
+@media(max-width:760px){
+  .project-stack{gap:28px}
+  .project-stack .project-art{height:240px;padding:14px}
+  .project-stack .project-body{padding:24px}
+}
+
+/* A scroll-lit introduction and a continuous path through each role. */
+.reveal-word{display:inline-block}
+.experience-timeline{position:relative;padding-left:34px}
+.timeline-track{position:absolute;left:5px;top:35px;bottom:0;width:1px;background:#ffffff16;pointer-events:none}
+.timeline-progress{position:absolute;inset:0;background:linear-gradient(#b7a0ff,#96d9d2);transform-origin:top}
+.experience-timeline .experience-row{position:relative}
+.timeline-node{position:absolute;left:-34px;top:30px;width:11px;height:11px;border:2px solid #dacaff;border-radius:50%;background:#b7a0ff;box-shadow:0 0 0 6px #b7a0ff15;z-index:1}
+@media(max-width:760px){
+  .experience-timeline{padding-left:24px}
+  .timeline-node{left:-24px}
+  .experience-timeline .experience-date{padding-right:90px;font-size:9px}
+}
+
+/* Scroll-assembled ASCII artwork echoes the portrait's neural sphere. */
+.ascii-art{position:relative;height:420px;min-width:0;background:radial-gradient(ellipse at center,#b7a0ff09,transparent 65%)}
+.ascii-art canvas{display:block;width:100%;height:100%}
+.ascii-bracket{position:absolute;font:18px 'Courier New',monospace;color:#b7a0ff55}
+.ascii-bracket-top{top:12px;left:12px}
+.ascii-bracket-bottom{bottom:12px;right:12px}
+.ascii-caption{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);white-space:nowrap;font:9px 'Courier New',monospace;letter-spacing:2px;color:#9990ac}
+@media(max-width:760px){
+  .ascii-art{height:300px}
+}
+
+.ascii-hero{height:555px}
+.ascii-hero .ascii-art{position:absolute;inset:0 0 42px;height:auto;overflow:hidden}
+@media(max-width:760px){.ascii-hero{height:380px}}
+
+.ascii-art{cursor:pointer;border-radius:16px}
+.ascii-art:focus-visible{outline:2px solid var(--violet);outline-offset:4px}
+.ascii-touch-hint{display:none}
+@media(hover:none){.ascii-hover-hint{display:none}.ascii-touch-hint{display:inline}}
+
+/* Two aligned views of the notebook's saved comparison figure. */
+.lut-demo{min-width:0;display:flex;flex-direction:column;justify-content:center;padding:28px;background:radial-gradient(ellipse at center,#352e4944,#171723);border-right:1px solid var(--line)}
+.lut-labels,.lut-control{display:flex;justify-content:space-between;gap:12px;font-size:9px;letter-spacing:1.2px;color:var(--violet)}
+.lut-labels{margin-bottom:14px}
+.lut-comparison{position:relative;aspect-ratio:423/238;overflow:hidden;border-radius:8px;background:#16161b}
+.lut-image{position:absolute;inset:0;overflow:hidden}
+.lut-image img{position:absolute;max-width:none;width:224.5863%;height:117.6471%;top:-13.4454%;pointer-events:none;user-select:none}
+.lut-before img{left:-2.3641%}
+.lut-after img{left:-122.2222%}
+.lut-divider{position:absolute;top:0;bottom:0;width:2px;background:#fff;transform:translateX(-50%);pointer-events:none}
+.lut-divider>span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#b7a0ff;color:#171025;box-shadow:0 2px 12px #0006;font-size:18px}
+.lut-control{margin-top:22px;letter-spacing:0;font-size:12px;color:#dbdbe5}
+.lut-range{display:block;width:100%;height:36px;margin:3px 0 0;accent-color:var(--violet);cursor:ew-resize}
+.lut-range:focus-visible{outline:2px solid var(--violet);outline-offset:3px;border-radius:5px}
+.lut-note{font-size:10px;color:var(--muted);margin:8px 0 0}
+@media(max-width:999px){.lut-demo{padding:24px;border-right:0;border-bottom:1px solid var(--line)}}
+
+.ascii-hero .ascii-art{contain:layout paint}
+.ascii-fallback{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:68%;height:72%;object-fit:cover;object-position:center 35%;border-radius:50%}
+.ascii-art[data-fallback] .ascii-fallback{display:block}
+.ascii-art[data-fallback] canvas,.ascii-art[data-fallback] .ascii-caption{visibility:hidden}
+
+/* Quiet controls and a lightweight, interactive map of skills. */
+.button{min-height:46px;padding:13px 24px;gap:0;border-radius:6px;font-size:13px;font-weight:600;letter-spacing:.1px;box-shadow:none;transition:background .18s,border-color .18s,color .18s}
+.button:hover,.button:focus-visible{transform:none;box-shadow:none}
+.button.primary{background:#b7a0ff;border-color:#b7a0ff;color:#171025;box-shadow:none}
+.button.primary:hover{background:#c7b5ff;border-color:#c7b5ff}
+.button.secondary{background:#ffffff03;border-color:#ffffff25;color:#e2dfed}
+.button.secondary:hover{background:#ffffff08;border-color:#b7a0ff70}
+.nav-contact{border-radius:6px;font-weight:600;transition:background .18s,border-color .18s}
+.nav-contact:hover{background:#ffffff08;border-color:#b7a0ff70}
+.text-link,.code-link{font-weight:550}
+.text-link:hover,.code-link:hover{text-decoration:underline;text-underline-offset:5px}
+.about{align-items:start}
+.skills-constellation{min-width:0;border:1px solid #ffffff16;border-radius:16px;padding:24px;background:linear-gradient(145deg,#161522,#0e1019)}
+.constellation-heading{display:flex;align-items:start;justify-content:space-between;gap:12px}
+.constellation-heading .eyebrow{font-size:8px;letter-spacing:1.6px;margin-bottom:8px}
+.constellation-heading h3{font-size:19px;font-weight:550;letter-spacing:-.5px;margin:0}
+.constellation-count{font:9px 'Courier New',monospace;white-space:nowrap;color:#8b849e;padding-top:3px}
+.constellation-intro{font-size:12px;line-height:1.7;color:var(--muted);margin:12px 0 0}
+.constellation-map{position:relative;height:300px;margin:16px -6px 20px;background:radial-gradient(ellipse at 47% 44%,#b7a0ff0c,transparent 65%)}
+.constellation-map svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.constellation-map path{fill:none;stroke:#ffffff12;stroke-width:.3;vector-effect:non-scaling-stroke;transition:stroke .2s,stroke-width .2s}
+.constellation-map path.is-connected{stroke:#b7a0ff80;stroke-width:1}
+.constellation-orbit{fill:none;stroke:#b7a0ff12;stroke-width:.4;stroke-dasharray:1 2}
+.constellation-core{position:absolute;left:47%;top:44%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;border:1px solid #b7a0ff45;background:#1d192b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:0 0 35px #b7a0ff0b}
+.constellation-core>span{font:550 20px 'Manrope',sans-serif;color:#d8caff;letter-spacing:-1px}
+.constellation-core small{font-size:5px;letter-spacing:1px;color:#a198b2}
+.skill-node{position:absolute;transform:translate(-50%,-50%);min-height:44px;padding:9px 11px;border-radius:7px;border:1px solid #ffffff15;background:#12131e;color:#9e99b0;font-size:11px;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:background .18s,border-color .18s,color .18s}
+.skill-node>span{width:4px;height:4px;border-radius:50%;background:#696277}
+.skill-node.is-related{color:#d8cdef;border-color:#b7a0ff40}
+.skill-node.is-related>span{background:#96d9d2}
+.skill-node:hover{background:#262035;border-color:#b7a0ff80;color:#fff}
+.skill-node[aria-pressed=true]{background:#b7a0ff;color:#171025;border-color:#c9b8ff}
+.skill-node[aria-pressed=true]>span{background:#3f2b67}
+.skill-node:focus-visible{outline:2px solid #e3d8ff;outline-offset:3px;z-index:2}
+.skill-results-heading{display:flex;justify-content:space-between;gap:16px;font-size:12px;align-items:center;margin:0;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.skill-results-heading strong{color:#d3bfff;font-weight:550}
+.skill-results-heading>span{color:var(--muted);font-size:10px}
+.skill-project-link{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:48px;padding:13px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.5;color:#d0cddc}
+.skill-project-link small{font-size:9px;white-space:nowrap;color:#948aa7}
+.skill-project-link:hover{color:#cfbaff}
+.skill-project-link:hover small{color:#cfbaff}
+.skills-directory{margin-top:18px;font-size:11px;color:var(--muted)}
+.skills-directory summary{cursor:pointer;padding:8px 0;color:#bcb4cb;min-height:34px}
+.skills-directory summary:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+.skills-directory h4{font-size:11px;font-weight:550;color:#d0c9df;margin:16px 0 6px}
+.skills-directory p{font-size:11px;line-height:1.9;margin:0}
+@media(max-width:1100px) and (min-width:761px){.about{grid-template-columns:1fr}.skills-constellation{width:100%}.constellation-map{max-width:650px;margin-inline:auto}.about-copy{max-width:650px}}
+@media(max-width:500px){.skills-constellation{padding:20px}.constellation-count{display:none}.constellation-heading h3{font-size:18px}.constellation-map{height:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:20px 0}.constellation-map svg,.constellation-core{display:none}.skill-node{position:static;transform:none;justify-content:center;padding:9px 5px;font-size:10px}.skill-node>span{display:none}.skill-project-link{font-size:11px}.skill-project-link small{font-size:8px}.hero-actions .button{padding:13px 18px}}
+.startup-skip{width:auto;min-width:64px;padding:10px 16px;border-radius:6px;font-size:12px;font-weight:550}
