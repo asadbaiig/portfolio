@@ -10,6 +10,7 @@ export function createAsciiRenderer(canvas) {
     layout(location=2) in float seed;
     uniform vec2 viewport;
     uniform float ratio, radius, progress, phase, grid;
+    uniform vec2 pointer;
     out vec2 photoUV;
     out float morph, solid, spriteSize, glyphSize, tileSize, light;
     void main() {
@@ -23,10 +24,13 @@ export function createAsciiRenderer(canvas) {
       float y=sphere.y*cos(tilt)-z*sin(tilt);
       float depth=sphere.y*sin(tilt)+z*cos(tilt);
       vec2 origin=vec2(x,y)*3./(3.-depth);
-      vec2 arc=vec2(sin(seed*60.),cos(seed*60.))*sin(morph*3.14159265)*.12;
+      origin += pointer * vec2(.045,.03) * (1.-morph) * (0.65+depth*.35);
+      float breathing=sin(phase*1.4+seed*24.)*.012*(1.-morph);
+      origin *= 1.+breathing;
+      vec2 arc=vec2(sin(seed*60.+phase),cos(seed*60.+phase*.8))*sin(morph*3.14159265)*.12;
       vec2 pos=mix(origin,target,morph)+arc;
       gl_Position=vec4(pos.x*radius*2./viewport.x,-pos.y*radius*2./viewport.y,-depth*.3*(1.-morph),1.);
-      glyphSize=12.*(1.-solid);
+      glyphSize=(10.5+light*2.5)*(1.-solid);
       tileSize=(radius*2./grid+.4)*solid;
       spriteSize=max(1.,max(glyphSize,tileSize));
       gl_PointSize=spriteSize*ratio;
@@ -36,7 +40,7 @@ export function createAsciiRenderer(canvas) {
   const fragment = `#version 300 es
     precision highp float;
     uniform sampler2D glyphAtlas, portrait;
-    uniform float grid;
+    uniform float grid, phase;
     in vec2 photoUV;
     in float morph, solid, spriteSize, glyphSize, tileSize, light;
     out vec4 color;
@@ -48,7 +52,7 @@ export function createAsciiRenderer(canvas) {
         color=vec4(texture(portrait,uv).rgb,1.);
       } else if(glyphSize>.1 && max(abs(delta.x),abs(delta.y))<=glyphSize*.5) {
         vec2 uv=delta/glyphSize+.5;
-        float glyph=floor(light*7.);
+        float glyph=clamp(floor(light*7.+sin(phase*2.2+photoUV.x*18.+photoUV.y*13.)*.7),0.,7.);
         float alpha=texture(glyphAtlas,vec2((glyph+uv.x)/8.,uv.y)).a;
         if(alpha<.1) discard;
         vec3 ink=mix(vec3(.718,.627,1.),texture(portrait,photoUV).rgb,morph);
@@ -91,7 +95,7 @@ export function createAsciiRenderer(canvas) {
     });
     buffer=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buffer); gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
     [3,2,1].forEach((size,index) => { gl.enableVertexAttribArray(index); gl.vertexAttribPointer(index,size,gl.FLOAT,false,24,[0,12,20][index]); });
-    const uniforms = Object.fromEntries(['viewport','ratio','radius','progress','phase','grid','glyphAtlas','portrait'].map(name=>[name,gl.getUniformLocation(program,name)]));
+    const uniforms = Object.fromEntries(['viewport','ratio','radius','progress','phase','grid','pointer','glyphAtlas','portrait'].map(name=>[name,gl.getUniformLocation(program,name)]));
     const texture = (unit, source) => {
       const item=gl.createTexture();textures.push(item);gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,item);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
@@ -115,8 +119,8 @@ export function createAsciiRenderer(canvas) {
         const ratio=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(width*ratio);canvas.height=Math.round(height*ratio);
         gl.viewport(0,0,canvas.width,canvas.height);gl.uniform2f(uniforms.viewport,width,height);gl.uniform1f(uniforms.ratio,ratio);gl.uniform1f(uniforms.radius,Math.min(width*.34,height*.36));
       },
-      draw(progress,phase) {
-        gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.uniform1f(uniforms.progress,progress);gl.uniform1f(uniforms.phase,phase);gl.drawArrays(gl.POINTS,0,targets.length);
+      draw(progress,phase,pointer={x:0,y:0}) {
+        gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.uniform1f(uniforms.progress,progress);gl.uniform1f(uniforms.phase,phase);gl.uniform2f(uniforms.pointer,pointer.x,pointer.y);gl.drawArrays(gl.POINTS,0,targets.length);
       }, dispose,
     };
   } catch (error) { dispose(); console.warn('ASCII GPU renderer unavailable',error); return null; }

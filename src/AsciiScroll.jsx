@@ -7,6 +7,8 @@ export default function AsciiScroll({ animated }) {
   const canvasRef = useRef(null);
   const photoRef = useRef(null);
   const phaseRef = useRef(0);
+  const pointerRef = useRef({ x: 0, y: 0 });
+  const pointerTargetRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -25,18 +27,29 @@ export default function AsciiScroll({ animated }) {
       const delta = lastTime ? Math.min((time-lastTime)/1000, .05) : 1/60;
       lastTime = time;
       const target = !moving || hovered || focused || tapped ? 1 : 0;
-      // Complete the motion in a bounded time instead of slowly chasing the target.
-      progress = !moving ? 1 : target > progress ? Math.min(target,progress+delta/.65) : Math.max(target,progress-delta/.65);
-      if (moving) phaseRef.current += delta*.38*(1-progress);
-      renderer.draw(ready ? progress : 0, phaseRef.current);
-      if (moving && (progress < 1 || progress !== target)) schedule();
+      const easing = 1 - Math.exp(-delta * 6);
+      progress = !moving ? 1 : progress + (target - progress) * easing;
+      if (Math.abs(target - progress) < .001) progress = target;
+      const pointerEasing = 1 - Math.exp(-delta * 8);
+      pointerRef.current.x += (pointerTargetRef.current.x - pointerRef.current.x) * pointerEasing;
+      pointerRef.current.y += (pointerTargetRef.current.y - pointerRef.current.y) * pointerEasing;
+      if (moving) phaseRef.current += delta * (.16 + (1 - progress) * .2);
+      renderer.draw(ready ? progress : 0, phaseRef.current, pointerRef.current);
+      if (moving) schedule();
     };
     const schedule = () => {
       if (!frame && visible && !document.hidden && !lost) frame = requestAnimationFrame(draw);
     };
     const suspend = () => { cancelAnimationFrame(frame); frame = 0; lastTime = 0; };
     const enter = event => { if(event.pointerType !== 'touch') { hovered = true; schedule(); } };
-    const leave = () => { hovered = false; schedule(); };
+    const leave = () => { hovered = false; resetPointer(); };
+    const move = event => {
+      const bounds = section.getBoundingClientRect();
+      pointerTargetRef.current.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+      pointerTargetRef.current.y = ((event.clientY - bounds.top) / bounds.height) * 2 - 1;
+      schedule();
+    };
+    const resetPointer = () => { pointerTargetRef.current.x = 0; pointerTargetRef.current.y = 0; schedule(); };
     const focus = () => { focused = section.matches(':focus-visible'); schedule(); };
     const blur = () => { focused = false; tapped = false; schedule(); };
     const tap = event => { if(event.pointerType === 'touch') { tapped = !tapped; schedule(); } };
@@ -55,7 +68,7 @@ export default function AsciiScroll({ animated }) {
     });
     const resizeObserver = new ResizeObserver(resize);
     observer.observe(section); resizeObserver.observe(canvas);
-    const events = { pointerenter: enter, pointerleave: leave, pointerup: tap, focus, blur };
+    const events = { pointerenter: enter, pointerleave: leave, pointermove: move, pointerup: tap, focus, blur };
     Object.entries(events).forEach(([name,listener]) => section.addEventListener(name,listener));
     photo.addEventListener('load',load);
     canvas.addEventListener('webglcontextlost',contextLost);
