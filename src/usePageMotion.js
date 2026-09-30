@@ -86,7 +86,9 @@ export default function usePageMotion(enabled, expanded) {
           play(element, Math.min(index * 65, 195));
         });
       }, { threshold: .12 });
-      document.querySelectorAll('.section-heading, .projects-grid .project-card, .skills-constellation, .cert-grid > a, .contact > .eyebrow, .contact > h2, .contact > .email-link').forEach(element => {
+      document.querySelectorAll(
+        '.section-heading, .projects-grid .project-card, .skills-constellation, .cert-card, .cert-grid > a, .stat-row, .experience-row, .availability-badge, .contact-signature, .contact > .eyebrow, .contact > h2, .contact-actions, .stack-strip'
+      ).forEach(element => {
         if (!element.dataset.entered) observer.observe(element);
       });
     };
