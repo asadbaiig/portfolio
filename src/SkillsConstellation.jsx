@@ -181,6 +181,30 @@ export default function SkillsConstellation({ onProjectSelect }) {
         })}
       </div>
 
+      <div className="constellation-insight-grid" aria-label="Engineering focus areas">
+        <article className="insight-panel insight-panel-primary">
+          <p className="insight-label">WHAT I BUILD</p>
+          <h4>Full-stack systems that connect data, product, and people.</h4>
+          <p>
+            I design and ship tools that turn complex workflows into clear decisions — from interactive dashboards to AI-assisted experiences.
+          </p>
+        </article>
+
+        <div className="insight-stack">
+          <article className="insight-panel">
+            <p className="insight-label">AI + PRODUCT</p>
+            <h4>Applied intelligence</h4>
+            <p>RAG systems, predictive tooling, workflow automation, and user-facing decision support.</p>
+          </article>
+
+          <article className="insight-panel">
+            <p className="insight-label">ENGINEERING</p>
+            <h4>Reliable delivery</h4>
+            <p>Modern frontends, backend integrations, cloud-ready architecture, and performance-minded products.</p>
+          </article>
+        </div>
+      </div>
+
       {/* Project Showcase Cards */}
       <div id="skill-projects" className="skill-projects-showcase">
         <div className="skill-results-header">

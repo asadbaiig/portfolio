@@ -25,6 +25,17 @@ function ProjectCard({ project, index }) {
     >
       {project.comparison ? (
         <LutComparison image={project.comparison} />
+      ) : project.video ? (
+        <div className="project-art project-art-video">
+          <video
+            src={`${baseUrl}${project.video}`}
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-label={project.imageAlt}
+          />
+        </div>
       ) : project.image ? (
         <div className="project-art project-art-image">
           <img src={`${baseUrl}${project.image}`} alt={project.imageAlt} loading="lazy" />
@@ -301,7 +312,7 @@ export default function App() {
                 Software engineer at the intersection of full-stack, AI, and data — connecting complex challenges to experiences that feel simple.
               </p>
               <div className="stat-row">
-                <StatCounter value="9" label="Projects" />
+                <StatCounter value="10" label="Projects" />
                 <StatCounter value="2" label="Internships" />
                 <StatCounter value="30" label="Skills" />
               </div>

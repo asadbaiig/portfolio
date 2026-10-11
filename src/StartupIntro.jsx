@@ -19,6 +19,10 @@ export default function StartupIntro({ onComplete }) {
     };
   }, [onComplete]);
   return <div className="startup-intro" role="status" aria-label="Loading portfolio">
+    <div className="startup-shell" aria-hidden="true">
+      <div className="startup-grid" />
+      <div className="startup-panel" />
+    </div>
     <div className="startup-orbit" aria-hidden="true">
       <span className="startup-ring"/>
       <span className="startup-ring startup-ring-inner"/>

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 const roles = [
   'Full-Stack Developer',
   'AI Engineer',
-  'Data Alchemist',
+  'Data Analyst',
   'Problem Solver',
   'Creative Builder',
 ];

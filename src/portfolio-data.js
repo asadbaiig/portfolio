@@ -71,6 +71,21 @@ const projects = [
     url: 'https://github.com/asadbaiig/SmartRent-Project'
   },
   {
+    title: 'Handsfree — Gesture-Controlled Spotify Player',
+    video: 'linkedin.mp4',
+    imageAlt: 'Handsfree touchless gesture-controlled Spotify music player demo',
+    featured: true,
+    tech: 'Python - OpenCV - MediaPipe - FastAPI - React - WebSockets',
+    shortDesc: 'Touchless music control using real-time computer vision — play, pause, skip, and adjust volume with hand gestures detected by a standard webcam.',
+    highlights: [
+      'MediaPipe hand tracking with custom temporal gesture state machine',
+      'Spotify OAuth 2.0 PKCE with non-blocking playback worker',
+      'React + FastAPI dashboard with MJPEG streaming & WebSocket sync'
+    ],
+    description: 'A touchless, gesture-controlled Spotify player that uses real-time computer vision to detect hand gestures and translate them into playback commands — play, pause, skip, volume — without ever touching keyboard, mouse, or phone. Features a custom temporal gesture engine, dual interfaces (React web dashboard + OpenCV desktop app), and full Spotify Web API integration with PKCE authentication.',
+    url: 'https://github.com/asadbaiig/Air_Music_OpenCV'
+  },
+  {
     title: 'Sales Forecasting & Predictive Analytics',
     tech: 'Python - Pandas - NumPy - Matplotlib',
     shortDesc: 'Demand forecasting across global markets with uncertainty estimation.',
