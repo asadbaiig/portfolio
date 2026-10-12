@@ -1,21 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function ScrollProgress() {
-  const [progress, setProgress] = useState(0);
+  const barRef = useRef(null);
 
   useEffect(() => {
-    const onScroll = () => {
-      const scrollTop = window.scrollY;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
+      const progress = docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0;
+      if (barRef.current) {
+        barRef.current.style.width = `${progress * 100}%`;
+        barRef.current.style.opacity = progress > 0.002 ? '1' : '0';
+      }
     };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   return (
     <div className="scroll-progress" aria-hidden="true">
-      <div className="scroll-progress-bar" style={{ width: `${progress}%` }} />
+      <div ref={barRef} className="scroll-progress-bar" />
     </div>
   );
 }

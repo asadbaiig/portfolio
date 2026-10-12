@@ -54,7 +54,7 @@ function ProjectCard({ project, index }) {
         </div>
         <h3>{project.title}</h3>
         <p className="project-desc">{project.shortDesc || project.description}</p>
-        {project.highlights && (
+        {project.highlights && project.badge && (
           <ul className="project-highlights">
             {project.highlights.map((h, i) => (
               <li key={i}>{h}</li>
@@ -128,6 +128,7 @@ function CopyEmail() {
 export default function App() {
   const [wireframe, setWireframe] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [showAllCerts, setShowAllCerts] = useState(false);
   const [projectTarget, setProjectTarget] = useState(null);
   const selectProject = index => {
     if (index >= 3) setExpanded(true);
@@ -193,14 +194,19 @@ export default function App() {
             </MagneticButton>
           </nav>
 
-          <section className="hero" id="home">
+          <section className={`hero ${intro ? 'is-waiting' : ''}`} id="home">
             <div className="hero-content">
-              <p className="eyebrow intro">
+              <p className="hero-hello">
                 <span className="pulse-indicator" />
+                <span>Hi, I'm <strong>Asad</strong></span>
+                <span className="hero-hello-sep" aria-hidden="true" />
                 <RoleTicker />
               </p>
-              <h1 className="hero-heading">Engineering ideas.<br /><em>Creating impact.</em></h1>
-              <p className="hero-description">Turning complex problems into elegant, intelligent solutions.</p>
+              <h1 className="hero-heading">
+                <span className="hero-line"><span>Engineering ideas.</span></span>
+                <span className="hero-line"><em>Creating impact.</em></span>
+              </h1>
+              <p className="hero-description">I build full-stack products and AI systems that make complex problems feel simple.</p>
               <div className="hero-actions">
                 <MagneticButton className="button primary" href="#projects">
                   Explore my work <span>↓</span>
@@ -210,13 +216,15 @@ export default function App() {
                 </MagneticButton>
               </div>
               <div className="hero-focus" aria-label="Areas of focus">
-                <span className="hero-focus-label">FOCUSED ON</span>
-                <div>
-                  <span>Full-stack Development</span>
-                  <span>AI &amp; Machine Learning</span>
-                  <span>Data Engineering</span>
-                </div>
+                <span className="hero-chip"><i>⌘</i>Full-stack</span>
+                <span className="hero-chip"><i>✦</i>AI &amp; ML</span>
+                <span className="hero-chip"><i>◆</i>Data Engineering</span>
               </div>
+              <p className="hero-meta">
+                <span>📍 Islamabad, PK</span>
+                <span className="hero-meta-dot" aria-hidden="true" />
+                <span>Currently at PakDatacom</span>
+              </p>
             </div>
             <div className="hero-visual ascii-hero">
               <div className="visual-grid" />
@@ -232,38 +240,7 @@ export default function App() {
             </div>
           </section>
 
-          <details className="ascii-explainer" onToggle={() => window.dispatchEvent(new Event('resize'))}>
-            <summary>
-              <span>Behind the ASCII</span>
-              <small>How the portrait comes together</small>
-            </summary>
-            <div className="ascii-explainer-content">
-              <div>
-                <span className="eyebrow">01 / CHARACTERS</span>
-                <h3>A moving cloud of code.</h3>
-                <p>Each character belongs to a particle on a rotating sphere. Its brightness changes with depth, giving the surface its shape.</p>
-              </div>
-              <div>
-                <span className="eyebrow">02 / CONNECTION</span>
-                <h3>Every particle has a place.</h3>
-                <p>Hover or tap the sphere. Each particle travels to a fixed position and becomes a small tile of my photo. Together, the tiles assemble the portrait.</p>
-              </div>
-              <div>
-                <span className="eyebrow">03 / UNDER THE SURFACE</span>
-                <h3>Follow the structure.</h3>
-                <p>Switch on Wireframe above to see each particle's square boundary along the same path. The GPU draws the entire scene in one call per frame.</p>
-              </div>
-            </div>
-          </details>
-
-          <div className="stack-strip">
-            <span>MY BUILDING BLOCKS</span>
-            <div>
-              {['React', 'Next.js', 'Python', 'Node.js', 'TensorFlow', 'PostgreSQL'].map((t, i) => (
-                <strong key={t} className="stack-item" style={{ '--stack-i': i }}>{t}</strong>
-              ))}
-            </div>
-          </div>
+          <p className="ascii-hint">✦ Hover the sphere to assemble the portrait</p>
 
           <section id="projects" className="section">
             <div className="section-heading">
@@ -297,7 +274,7 @@ export default function App() {
           </section>
 
           <section id="about" className="section about">
-            <div>
+            <div className="about-intro">
               <p className="eyebrow">02 / THE PERSON BEHIND THE CODE</p>
               <h2 className="about-reveal">
                 <span className="reveal-word">Curious</span>{" "}
@@ -313,7 +290,7 @@ export default function App() {
               </p>
               <div className="stat-row">
                 <StatCounter value="10" label="Projects" />
-                <StatCounter value="2" label="Internships" />
+                <StatCounter value="1" label="Year experience" />
                 <StatCounter value="30" label="Skills" />
               </div>
               <a className="text-link" href={resumeUrl} target="_blank" rel="noreferrer">
@@ -325,6 +302,13 @@ export default function App() {
                   <strong>Bachelor of Software Engineering</strong>
                   <p>Air University, Islamabad · 2022–2026</p>
                 </div>
+              </div>
+              <div className="about-now">
+                <div className="about-now-head">
+                  <span className="availability-dot" />
+                  <span>CURRENTLY</span>
+                </div>
+                <p><strong>Management Trainee Officer</strong> at PakDatacom Limited — working on ERP systems and legacy website optimization.</p>
               </div>
             </div>
             <SkillsConstellation onProjectSelect={selectProject} />
@@ -341,6 +325,21 @@ export default function App() {
               <span className="timeline-track" aria-hidden="true">
                 <span className="timeline-progress" />
               </span>
+              <div className="experience-row">
+                <span className="timeline-node" aria-hidden="true" />
+                <p className="experience-date">SEP 2026 — PRESENT</p>
+                <div>
+                  <div className="company-heading">
+                    <h3>Management Trainee Officer (MTO)</h3>
+                    <span className="company">PakDatacom Limited</span>
+                  </div>
+                  <div className="impact-chips">
+                    <span>ERP Systems</span>
+                    <span>Legacy Website Optimization</span>
+                  </div>
+                </div>
+                <span className="experience-tag">FULL-TIME</span>
+              </div>
               <div className="experience-row">
                 <span className="timeline-node" aria-hidden="true" />
                 <p className="experience-date">JUL 2025 — PRESENT</p>
@@ -388,7 +387,7 @@ export default function App() {
             </div>
             <div className="cert-scroll">
               <div className="cert-track">
-                {certificates.map((c, i) => (
+                {(showAllCerts ? certificates : certificates.slice(0, 4)).map((c, i) => (
                   <a key={c.file} href={c.url ?? `${baseUrl}utils/${c.file}`} target="_blank" rel="noreferrer" className="cert-card">
                     <div className="cert-thumb">
                       <img src={`${baseUrl}utils/${c.file}`} alt={c.title || `Certificate ${i + 1}`} loading="lazy" />
@@ -404,12 +403,17 @@ export default function App() {
                 ))}
               </div>
             </div>
+            {certificates.length > 4 && (
+              <button className="button secondary more-button" onClick={() => setShowAllCerts(!showAllCerts)} aria-expanded={showAllCerts}>
+                {showAllCerts ? 'Show fewer' : `View all ${certificates.length} certificates`} <span>{showAllCerts ? '−' : '+'}</span>
+              </button>
+            )}
           </section>
 
           <section id="contact" className="contact section">
             <div className="availability-badge">
               <span className="availability-dot" />
-              <span>Available for opportunities</span>
+              <span>Open to collaborations</span>
             </div>
             <ContactSignature animated={motion && !intro} />
             <p className="eyebrow">HAVE SOMETHING IN MIND?</p>
@@ -419,14 +423,6 @@ export default function App() {
                 Start a conversation <span>✉</span>
               </MagneticButton>
               <CopyEmail />
-            </div>
-            <div className="contact-socials">
-              <MagneticButton className="social-pill" href="https://www.linkedin.com/in/asad-baig1744/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-                LinkedIn <span>↗</span>
-              </MagneticButton>
-              <MagneticButton className="social-pill" href="https://github.com/asadbaiig" target="_blank" rel="noreferrer" aria-label="GitHub">
-                GitHub <span>↗</span>
-              </MagneticButton>
             </div>
           </section>
         </main>

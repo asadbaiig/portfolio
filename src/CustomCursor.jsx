@@ -1,8 +1,11 @@
 import { useEffect, useRef } from 'react';
 
+const HOVER_SELECTOR = 'a, button, [role="button"], .project-card, .skill-node, input, textarea, summary';
+
 export default function CustomCursor() {
   const dotRef = useRef(null);
   const ringRef = useRef(null);
+  const isTouch = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
 
   useEffect(() => {
     const dot = dotRef.current;
@@ -13,61 +16,48 @@ export default function CustomCursor() {
     let ringX = -100, ringY = -100;
     let hovering = false;
     let clicking = false;
-    let raf;
+    let raf = 0;
 
-    const onMove = (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    };
-
-    const onEnter = () => { hovering = true; };
-    const onLeave = () => { hovering = false; };
-    const onDown = () => { clicking = true; };
-    const onUp = () => { clicking = false; };
-
-    const addHoverListeners = () => {
-      document.querySelectorAll('a, button, [role="button"], .project-card, .skill-node, .cert-grid a, input, textarea').forEach(el => {
-        el.addEventListener('mouseenter', onEnter);
-        el.addEventListener('mouseleave', onLeave);
-      });
-    };
-
-    const loop = () => {
+    const render = () => {
+      raf = 0;
       ringX += (mouseX - ringX) * 0.15;
       ringY += (mouseY - ringY) * 0.15;
 
       dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%) scale(${clicking ? 0.5 : 1})`;
-      
       const scale = hovering ? 2.2 : clicking ? 0.6 : 1;
-      const opacity = hovering ? 0.25 : 0.5;
       ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%) scale(${scale})`;
-      ring.style.opacity = opacity;
+      ring.style.opacity = hovering ? 0.25 : 0.5;
       ring.style.borderColor = hovering ? '#b7a0ff' : '#ffffff44';
 
-      raf = requestAnimationFrame(loop);
+      // Keep animating only while the ring is still catching up.
+      if (Math.abs(mouseX - ringX) > 0.1 || Math.abs(mouseY - ringY) > 0.1) schedule();
     };
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(render); };
 
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mousedown', onDown);
-    document.addEventListener('mouseup', onUp);
-    addHoverListeners();
-    raf = requestAnimationFrame(loop);
+    const onMove = e => { mouseX = e.clientX; mouseY = e.clientY; schedule(); };
+    // Event delegation: one listener instead of re-scanning the DOM on every mutation.
+    const onOver = e => {
+      const next = !!e.target.closest?.(HOVER_SELECTOR);
+      if (next !== hovering) { hovering = next; schedule(); }
+    };
+    const onDown = () => { clicking = true; schedule(); };
+    const onUp = () => { clicking = false; schedule(); };
 
-    // Re-observe for dynamically added elements
-    const observer = new MutationObserver(addHoverListeners);
-    observer.observe(document.body, { childList: true, subtree: true });
+    document.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerover', onOver, { passive: true });
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('pointerup', onUp);
 
     return () => {
       cancelAnimationFrame(raf);
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mousedown', onDown);
-      document.removeEventListener('mouseup', onUp);
-      observer.disconnect();
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerover', onOver);
+      document.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('pointerup', onUp);
     };
-  }, []);
+  }, [isTouch]);
 
   // Only show on non-touch devices
-  const isTouch = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
   if (isTouch) return null;
 
   return <>

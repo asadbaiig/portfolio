@@ -77,9 +77,7 @@ export default function SkillsConstellation({ onProjectSelect }) {
         </div>
       </div>
 
-      <p className="constellation-intro">
-        Explore how engineering disciplines interconnect across real-world systems. Click any node to reveal linked projects.
-      </p>
+      <p className="constellation-intro">Click any node to see linked projects →</p>
 
       {/* Filter Tabs */}
       <div className="constellation-tabs" role="tablist" aria-label="Skill categories">
@@ -179,30 +177,6 @@ export default function SkillsConstellation({ onProjectSelect }) {
             </button>
           );
         })}
-      </div>
-
-      <div className="constellation-insight-grid" aria-label="Engineering focus areas">
-        <article className="insight-panel insight-panel-primary">
-          <p className="insight-label">WHAT I BUILD</p>
-          <h4>Full-stack systems that connect data, product, and people.</h4>
-          <p>
-            I design and ship tools that turn complex workflows into clear decisions — from interactive dashboards to AI-assisted experiences.
-          </p>
-        </article>
-
-        <div className="insight-stack">
-          <article className="insight-panel">
-            <p className="insight-label">AI + PRODUCT</p>
-            <h4>Applied intelligence</h4>
-            <p>RAG systems, predictive tooling, workflow automation, and user-facing decision support.</p>
-          </article>
-
-          <article className="insight-panel">
-            <p className="insight-label">ENGINEERING</p>
-            <h4>Reliable delivery</h4>
-            <p>Modern frontends, backend integrations, cloud-ready architecture, and performance-minded products.</p>
-          </article>
-        </div>
       </div>
 
       {/* Project Showcase Cards */}
