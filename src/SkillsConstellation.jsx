@@ -96,6 +96,14 @@ export default function SkillsConstellation({ onProjectSelect }) {
 
       {/* Visual Constellation Map */}
       <div className="constellation-map" role="group" aria-label="Interactive skill graph">
+        <div className="constellation-grid" aria-hidden="true" />
+        <div className="constellation-stars" aria-hidden="true" />
+        <div className="constellation-scan" aria-hidden="true" />
+        <div className="constellation-legend" aria-hidden="true">
+          <span><i className="lg-ai" />AI</span>
+          <span><i className="lg-web" />Web</span>
+          <span><i className="lg-data" />Data</span>
+        </div>
         {/* SVG Laser Grid & Lines */}
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" className="constellation-svg">
           <defs>
@@ -134,11 +142,20 @@ export default function SkillsConstellation({ onProjectSelect }) {
                 />
                 {/* Active energized laser path */}
                 {(isSelected || isConnected) && (
-                  <path
-                    className={`beam-active ${isSelected ? 'beam-selected' : 'beam-related'}`}
-                    d={`M 47 44 Q ${node.x} 44 ${node.x} ${node.y}`}
-                    filter="url(#laserGlow)"
-                  />
+                  <>
+                    <path
+                      className={`beam-active ${isSelected ? 'beam-selected' : 'beam-related'}`}
+                      d={`M 47 44 Q ${node.x} 44 ${node.x} ${node.y}`}
+                      filter="url(#laserGlow)"
+                    />
+                    <ellipse rx="0.7" ry="0.9" className={`beam-particle ${isSelected ? 'is-sel' : ''}`}>
+                      <animateMotion
+                        dur={isSelected ? '1.6s' : '2.4s'}
+                        repeatCount="indefinite"
+                        path={`M 47 44 Q ${node.x} 44 ${node.x} ${node.y}`}
+                      />
+                    </ellipse>
+                  </>
                 )}
               </g>
             );
@@ -171,7 +188,7 @@ export default function SkillsConstellation({ onProjectSelect }) {
               aria-controls="skill-projects"
               onClick={() => setSelected(node.name)}
             >
-              <span className="node-indicator" aria-hidden="true" />
+              <span className="node-icon" aria-hidden="true">{node.icon}</span>
               <span className="node-name">{node.name}</span>
               {isSelected && <span className="node-pulse" aria-hidden="true" />}
             </button>
