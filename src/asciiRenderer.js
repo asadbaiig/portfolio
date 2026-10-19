@@ -57,8 +57,10 @@ export function createAsciiRenderer(canvas) {
         // Floating: HUD-style corner brackets with a core dot, shaded by depth.
         // Assembled: full tile outlines whose brightness traces the portrait.
         vec2 p=gl_PointCoord;
+        float lum=dot(texture(portrait,photoUV).rgb,vec3(.299,.587,.114));
+        float hl=smoothstep(.12,.8,lum);
         float edge=min(min(p.x,1.-p.x),min(p.y,1.-p.y));
-        float w=mix(.07,.04,solid);
+        float w=mix(.07,.035+hl*.035,solid);
         float stroke=1.-smoothstep(w,w+fwidth(edge),edge);
         vec2 c=abs(p-.5);
         stroke*=mix(step(.26,min(c.x,c.y)),1.,solid);
@@ -68,9 +70,8 @@ export function createAsciiRenderer(canvas) {
         if(a<.05) discard;
         vec3 hue=mix(vec3(.72,.58,1.),vec3(.45,.85,.98),tint);
         hue=mix(hue*.6,hue*1.2,light);
-        float lum=dot(texture(portrait,photoUV).rgb,vec3(.299,.587,.114));
-        vec3 ink=mix(hue,mix(hue,vec3(1.),lum*.6),solid);
-        float fade=mix(.2+.8*light*(1.-rim*.4),.3+.7*lum,solid);
+        vec3 ink=mix(hue,mix(hue*.7,vec3(1.),hl*.8),solid);
+        float fade=mix(.2+.8*light*(1.-rim*.4),.15+.85*hl,solid);
         color=vec4(ink,a*fade);
         return;
       }
@@ -116,44 +117,44 @@ export function createAsciiRenderer(canvas) {
     gl.useProgram(program);
     const grid = 40;
     const targets = [];
-    for (let row=0; row<grid; row++) for(let col=0; col<grid; col++) {
-      const x=(col+.5)/grid*2-1, y=(row+.5)/grid*2-1;
-      if(x*x+y*y<=Math.pow(1+1.42/grid,2)) targets.push([x,y]);
+    for (let row = 0; row < grid; row++) for (let col = 0; col < grid; col++) {
+      const x = (col + .5) / grid * 2 - 1, y = (row + .5) / grid * 2 - 1;
+      if (x * x + y * y <= Math.pow(1 + 1.42 / grid, 2)) targets.push([x, y]);
     }
-    const data = new Float32Array(targets.length*6);
-    targets.forEach(([tx,ty],i) => {
-      const y=1-2*i/(targets.length-1), r=Math.sqrt(1-y*y), a=i*Math.PI*(3-Math.sqrt(5));
-      data.set([Math.cos(a)*r,y,Math.sin(a)*r,tx,ty,(i*.61803398875)%1],i*6);
+    const data = new Float32Array(targets.length * 6);
+    targets.forEach(([tx, ty], i) => {
+      const y = 1 - 2 * i / (targets.length - 1), r = Math.sqrt(1 - y * y), a = i * Math.PI * (3 - Math.sqrt(5));
+      data.set([Math.cos(a) * r, y, Math.sin(a) * r, tx, ty, (i * .61803398875) % 1], i * 6);
     });
-    buffer=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buffer); gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
-    [3,2,1].forEach((size,index) => { gl.enableVertexAttribArray(index); gl.vertexAttribPointer(index,size,gl.FLOAT,false,24,[0,12,20][index]); });
-    const uniforms = Object.fromEntries(['viewport','ratio','radius','progress','phase','grid','pointer','glyphAtlas','portrait','wireframe'].map(name=>[name,gl.getUniformLocation(program,name)]));
+    buffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    [3, 2, 1].forEach((size, index) => { gl.enableVertexAttribArray(index); gl.vertexAttribPointer(index, size, gl.FLOAT, false, 24, [0, 12, 20][index]); });
+    const uniforms = Object.fromEntries(['viewport', 'ratio', 'radius', 'progress', 'phase', 'grid', 'pointer', 'glyphAtlas', 'portrait', 'wireframe'].map(name => [name, gl.getUniformLocation(program, name)]));
     const texture = (unit, source) => {
-      const item=gl.createTexture();textures.push(item);gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,item);
-      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);
+      const item = gl.createTexture(); textures.push(item); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, item);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
     };
-    const atlas=document.createElement('canvas');atlas.width=256;atlas.height=32;
-    const ctx=atlas.getContext('2d');ctx.font='26px "Courier New", monospace';ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
-    [...'.:+*oO#@'].forEach((glyph,i)=>ctx.fillText(glyph,i*32+16,16));texture(0,atlas);
-    const placeholder=document.createElement('canvas');placeholder.width=placeholder.height=1;texture(1,placeholder);
-    gl.uniform1i(uniforms.glyphAtlas,0);gl.uniform1i(uniforms.portrait,1);gl.uniform1f(uniforms.grid,grid);
-    gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.enable(gl.DEPTH_TEST);
+    const atlas = document.createElement('canvas'); atlas.width = 256; atlas.height = 32;
+    const ctx = atlas.getContext('2d'); ctx.font = '26px "Courier New", monospace'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    [...'.:+*oO#@'].forEach((glyph, i) => ctx.fillText(glyph, i * 32 + 16, 16)); texture(0, atlas);
+    const placeholder = document.createElement('canvas'); placeholder.width = placeholder.height = 1; texture(1, placeholder);
+    gl.uniform1i(uniforms.glyphAtlas, 0); gl.uniform1i(uniforms.portrait, 1); gl.uniform1f(uniforms.grid, grid);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); gl.enable(gl.DEPTH_TEST);
     return {
       setPhoto(photo) {
-        const sample=document.createElement('canvas');sample.width=sample.height=512;
-        const side=Math.min(photo.naturalWidth,photo.naturalHeight);
-        sample.getContext('2d').drawImage(photo,(photo.naturalWidth-side)/2,(photo.naturalHeight-side)*.35,side,side,0,0,512,512);
-        gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,textures[1]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,sample);
+        const sample = document.createElement('canvas'); sample.width = sample.height = 512;
+        const side = Math.min(photo.naturalWidth, photo.naturalHeight);
+        sample.getContext('2d').drawImage(photo, (photo.naturalWidth - side) / 2, (photo.naturalHeight - side) * .35, side, side, 0, 0, 512, 512);
+        gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, textures[1]); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sample);
       },
-      resize(width,height) {
-        const ratio=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(width*ratio);canvas.height=Math.round(height*ratio);
-        gl.viewport(0,0,canvas.width,canvas.height);gl.uniform2f(uniforms.viewport,width,height);gl.uniform1f(uniforms.ratio,ratio);gl.uniform1f(uniforms.radius,Math.min(width*.34,height*.36));
+      resize(width, height) {
+        const ratio = Math.min(devicePixelRatio || 1, 1.5); canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
+        gl.viewport(0, 0, canvas.width, canvas.height); gl.uniform2f(uniforms.viewport, width, height); gl.uniform1f(uniforms.ratio, ratio); gl.uniform1f(uniforms.radius, Math.min(width * .34, height * .36));
       },
-      draw(progress,phase,wireframe=false,pointer={x:0,y:0}) {
-        gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.uniform1f(uniforms.progress,progress);gl.uniform1f(uniforms.phase,phase);gl.uniform2f(uniforms.pointer,pointer.x,pointer.y);gl.uniform1f(uniforms.wireframe,wireframe ? 1 : 0);gl.drawArrays(gl.POINTS,0,targets.length);
+      draw(progress, phase, wireframe = false, pointer = { x: 0, y: 0 }) {
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); gl.uniform1f(uniforms.progress, progress); gl.uniform1f(uniforms.phase, phase); gl.uniform2f(uniforms.pointer, pointer.x, pointer.y); gl.uniform1f(uniforms.wireframe, wireframe ? 1 : 0); gl.drawArrays(gl.POINTS, 0, targets.length);
       }, dispose,
     };
-  } catch (error) { dispose(); console.warn('ASCII GPU renderer unavailable',error); return null; }
+  } catch (error) { dispose(); console.warn('ASCII GPU renderer unavailable', error); return null; }
 }
