@@ -10,7 +10,10 @@ export default function StartupIntro({ onComplete }) {
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const finish = () => onComplete(false);
+    const finish = () => {
+      try { sessionStorage.setItem('introSeen', '1'); } catch { /* storage blocked */ }
+      onComplete(false);
+    };
     if (preference.matches) { finish(); return; }
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -69,6 +72,6 @@ export default function StartupIntro({ onComplete }) {
       <div className="startup-bar"><span style={{ transform: `scaleX(${progress / 100})` }} /></div>
     </div>
 
-    <button className="startup-skip" aria-label="Skip intro" title="Skip intro (Esc)" onClick={() => onComplete(false)}>Skip</button>
+    <button className="startup-skip" aria-label="Skip intro" title="Skip intro (Esc)" onClick={() => { try { sessionStorage.setItem('introSeen', '1'); } catch { /* storage blocked */ } onComplete(false); }}>Skip</button>
   </div>;
 }

@@ -1,8 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import AsciiScroll from './AsciiScroll.jsx';
-import ContactSignature from './ContactSignature.jsx';
-import LutComparison from './LutComparison.jsx';
-import SkillsConstellation from './SkillsConstellation.jsx';
 import StartupIntro from './StartupIntro.jsx';
 import CustomCursor from './CustomCursor.jsx';
 import RoleTicker from './RoleTicker.jsx';
@@ -12,29 +9,44 @@ import GlowCard from './GlowCard.jsx';
 import usePageMotion from './usePageMotion.js';
 import { baseUrl, resumeUrl, certificates, projects } from './portfolio-data.js';
 
-function ProjectCard({ project, index }) {
+// Below-the-fold sections load as separate chunks so the hero renders first.
+const ContactSignature = lazy(() => import('./ContactSignature.jsx'));
+const LutComparison = lazy(() => import('./LutComparison.jsx'));
+const SkillsConstellation = lazy(() => import('./SkillsConstellation.jsx'));
+
+const introSeen = () => { try { return sessionStorage.getItem('introSeen') === '1'; } catch { return false; } };
+
+function LazyVideo({ src, label }) {
+  const ref = useCallback((node) => {
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) node.play().catch(() => {});
+      else node.pause();
+    }, { threshold: 0.2 });
+    observer.observe(node);
+  }, []);
+  return <video ref={ref} src={src} loop muted playsInline preload="metadata" aria-label={label} />;
+}
+
+function ProjectCard({ project, index, tilt = true }) {
   const Card = project.comparison ? "article" : "a";
   const linkProps = project.comparison ? {} : { href: project.url, target: "_blank", rel: "noreferrer" };
   return (
     <GlowCard
       as={Card}
       id={`project-${index}`}
+      tilt={tilt}
       tabIndex={project.comparison ? -1 : 0}
       className={`project-card project-${index % 3} ${project.featured ? 'project-featured' : ''}`}
       {...linkProps}
     >
       {project.comparison ? (
-        <LutComparison image={project.comparison} />
+        <Suspense fallback={<div className="project-art" aria-hidden="true" />}>
+          <LutComparison image={project.comparison} />
+        </Suspense>
       ) : project.video ? (
         <div className="project-art project-art-video">
-          <video
-            src={`${baseUrl}${project.video}`}
-            autoPlay
-            loop
-            muted
-            playsInline
-            aria-label={project.imageAlt}
-          />
+          <LazyVideo src={`${baseUrl}${project.video}`} label={project.imageAlt} />
         </div>
       ) : project.image ? (
         <div className="project-art project-art-image">
@@ -148,7 +160,7 @@ export default function App() {
   }, [projectTarget, expanded]);
   const [menu, setMenu] = useState(false);
   const [motion, setMotion] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const [intro, setIntro] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [intro, setIntro] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !introSeen());
   usePageMotion(motion && !intro, expanded);
 
   return (
@@ -255,9 +267,10 @@ export default function App() {
                 <div className="project-stack-item" key={project.url} style={{ "--card-index": index }}>
                   <div className="project-chapter" aria-hidden="true">
                     <span>SELECTED WORK</span>
+                    <span className="chapter-track"><i style={{ width: `${((index + 1) / 3) * 100}%` }} /></span>
                     <span>0{index + 1} / 03</span>
                   </div>
-                  <ProjectCard project={project} index={index} />
+                  <ProjectCard project={project} index={index} tilt={false} />
                 </div>
               ))}
             </div>
@@ -311,7 +324,7 @@ export default function App() {
                 <p><strong>Management Trainee Officer</strong> at PakDatacom Limited — working on ERP systems and legacy website optimization.</p>
               </div>
             </div>
-            <SkillsConstellation onProjectSelect={selectProject} />
+            <Suspense fallback={<div className="section-placeholder" aria-hidden="true" />}><SkillsConstellation onProjectSelect={selectProject} /></Suspense>
           </section>
 
           <section id="experience" className="section">
@@ -415,7 +428,7 @@ export default function App() {
               <span className="availability-dot" />
               <span>Open to collaborations</span>
             </div>
-            <ContactSignature animated={motion && !intro} />
+            <Suspense fallback={null}><ContactSignature animated={motion && !intro} /></Suspense>
             <p className="eyebrow">HAVE SOMETHING IN MIND?</p>
             <h2>Let's build something<br /><em>worth putting out there.</em></h2>
             <div className="contact-actions">

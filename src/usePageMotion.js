@@ -28,9 +28,9 @@ export default function usePageMotion(enabled, expanded) {
         cards.forEach((item, index) => {
           if (!cards[index + 1]) return;
           gsap.to(item.querySelector('.project-card'), {
-            scale: 0.94, y: -12, ease: 'none',
+            scale: 0.94, y: -12, '--dim': 0.55, ease: 'none',
             scrollTrigger: {
-              trigger: cards[index + 1], start: 'top 85%', end: 'top 150px', scrub: true,
+              trigger: cards[index + 1], start: 'top 85%', end: 'top 150px', scrub: 0.6,
               invalidateOnRefresh: true,
             },
           });

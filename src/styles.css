@@ -168,21 +168,27 @@
 /* Featured work stays readable without motion; larger screens layer the cards on scroll. */
 .project-stack{display:flex;flex-direction:column;gap:32px}
 .project-stack-item{min-width:0}
-.project-chapter{display:flex;justify-content:space-between;padding:0 4px 12px;color:var(--muted);font-size:9px;letter-spacing:2px}
+.project-chapter{display:flex;align-items:center;gap:16px;justify-content:space-between;padding:0 4px 12px;color:var(--muted);font-size:9px;letter-spacing:2px}
 .project-chapter>span:last-child{color:var(--violet)}
-.project-stack .project-card{display:grid;grid-template-columns:1.15fr 1fr;min-height:420px;border-radius:18px;background:#12131e;box-shadow:0 20px 60px #0004}
+.chapter-track{flex:1;height:1px;background:#ffffff14;position:relative;overflow:hidden}
+.chapter-track i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#b7a0ff,#73d9fa)}
+.project-stack .project-card{display:grid;grid-template-columns:1.15fr 1fr;min-height:420px;border-radius:18px;background:#12131e;box-shadow:0 18px 40px #0005;position:relative;--dim:0}
+.project-stack .project-card::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(135deg,#b7a0ff55,transparent 35%,transparent 65%,#73d9fa40);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:2}
+.project-stack .project-card::after{content:'';position:absolute;inset:0;border-radius:inherit;background:#0b0c14;opacity:var(--dim);pointer-events:none;z-index:3}
 .project-stack .project-art{height:100%;min-height:420px;border-bottom:0;border-right:1px solid var(--line)}
 .project-stack .project-art-image{padding:24px;background:radial-gradient(ellipse at center,#352e49,#171723)}
-.project-stack .project-art-image img{border-radius:8px}
+.project-stack .project-art-image img{border-radius:8px;transition:transform .6s cubic-bezier(.22,1,.36,1)}
+.project-stack .project-card:hover .project-art-image img{transform:scale(1.03)}
 .project-stack .project-body{display:flex;flex-direction:column;justify-content:center;padding:36px}
 .project-stack .project-body h3{font-size:clamp(23px,2.3vw,32px);line-height:1.25;letter-spacing:-.8px}
 .project-stack .project-body>p:not(.eyebrow){font-size:13px;line-height:1.85}
 .project-stack .code-link{padding-top:20px;border-top:1px solid var(--line);font-size:12px}
 .additional-projects{margin-top:40px}
+.section-placeholder{min-height:520px;border-radius:16px;background:linear-gradient(135deg,#ffffff05,#ffffff02)}
 @media(min-width:1000px) and (min-height:720px){
   .project-stack.is-stacking{gap:100px;padding-bottom:32px}
   .is-stacking .project-stack-item{position:sticky;top:calc(112px + var(--card-index)*16px)}
-  .is-stacking .project-card{transform-origin:50% 0;transition:border-color .3s,box-shadow .3s}
+  .is-stacking .project-card{transform-origin:50% 0;transition:border-color .3s;will-change:transform;backface-visibility:hidden;contain:layout paint}
   .is-stacking .project-card:hover{transform:none}
   .is-stacking .project-stack-item:focus-within{z-index:5}
 }
@@ -211,7 +217,7 @@
 }
 
 /* Scroll-assembled ASCII artwork echoes the portrait's neural sphere. */
-.ascii-art{position:relative;height:420px;min-width:0;background:radial-gradient(ellipse at center,#b7a0ff09,transparent 65%)}
+.ascii-art{position:relative;height:420px;min-width:0;background:radial-gradient(circle at 42% 40%,#b7a0ff1f,transparent 45%),radial-gradient(circle at 60% 62%,#73d9fa14,transparent 50%)}
 .ascii-art canvas{display:block;width:100%;height:100%}
 .ascii-bracket{position:absolute;font:18px 'Courier New',monospace;color:#b7a0ff55}
 .ascii-bracket-top{top:12px;left:12px}

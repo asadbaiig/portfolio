@@ -12,46 +12,66 @@ export function createAsciiRenderer(canvas) {
     uniform float ratio, radius, progress, phase, grid;
     uniform vec2 pointer;
     out vec2 photoUV;
-    out float morph, solid, spriteSize, glyphSize, tileSize, light;
+    out float morph, solid, spriteSize, glyphSize, tileSize, light, rim, tint;
     void main() {
       float t = clamp((progress-seed*.08)/.92,0.,1.);
       morph = t*t*(3.-2.*t);
       solid = smoothstep(.55,1.,morph);
-      float angle=phase+progress*1.4;
-      float tilt=.3+sin(phase*.7)*.12*(1.-progress);
+      float idle=1.-progress;
+      float angle=phase+progress*1.4+pointer.x*.6*idle;
+      float tilt=.3+sin(phase*.7)*.12*idle+pointer.y*.4*idle;
       float x=sphere.x*cos(angle)+sphere.z*sin(angle);
       float z=-sphere.x*sin(angle)+sphere.z*cos(angle);
       float y=sphere.y*cos(tilt)-z*sin(tilt);
       float depth=sphere.y*sin(tilt)+z*cos(tilt);
+      light=clamp((depth+1.)*.5,0.,1.);
+      rim=smoothstep(.72,1.,length(vec2(x,y)));
       vec2 origin=vec2(x,y)*3./(3.-depth);
-      origin += pointer * vec2(.045,.03) * (1.-morph) * (0.65+depth*.35);
+      // Push glyphs away from the cursor, settling back when it leaves.
+      vec2 cursor=pointer*viewport/(2.*radius);
+      vec2 away=origin-cursor;
+      float push=exp(-dot(away,away)*9.)*.16*(1.-morph)*light;
+      origin+=away/(length(away)+1e-4)*push;
+      tint=clamp(origin.x*.35-origin.y*.35+.5,0.,1.);
       float breathing=sin(phase*1.4+seed*24.)*.012*(1.-morph);
       origin *= 1.+breathing;
       vec2 arc=vec2(sin(seed*60.+phase),cos(seed*60.+phase*.8))*sin(morph*3.14159265)*.12;
       vec2 pos=mix(origin,target,morph)+arc;
       gl_Position=vec4(pos.x*radius*2./viewport.x,-pos.y*radius*2./viewport.y,-depth*.3*(1.-morph),1.);
-      glyphSize=(10.5+light*2.5)*(1.-solid);
+      glyphSize=(6.5+light*7.5)*(1.-rim*.25)*(1.-solid);
       tileSize=(radius*2./grid+.4)*solid;
       spriteSize=max(1.,max(glyphSize,tileSize));
       gl_PointSize=spriteSize*ratio;
       photoUV=target*.5+.5;
-      light=clamp((depth+1.)*.5,0.,1.);
     }`;
   const fragment = `#version 300 es
     precision highp float;
     uniform sampler2D glyphAtlas, portrait;
     uniform float grid, wireframe, phase;
     in vec2 photoUV;
-    in float morph, solid, spriteSize, glyphSize, tileSize, light;
+    in float morph, solid, spriteSize, glyphSize, tileSize, light, rim, tint;
     out vec4 color;
     void main() {
       vec2 delta=(gl_PointCoord-.5)*spriteSize;
       if(wireframe>.5) {
-        // Show the actual square sprite bounds, following the same particle paths.
-        float edge=min(min(gl_PointCoord.x,1.-gl_PointCoord.x),min(gl_PointCoord.y,1.-gl_PointCoord.y));
-        float stroke=1.-smoothstep(.035,.035+fwidth(edge),edge);
-        if(stroke<.05) discard;
-        color=vec4(mix(vec3(.718,.627,1.),vec3(.588,.851,.824),morph),stroke*(.4+.6*light));
+        // Floating: HUD-style corner brackets with a core dot, shaded by depth.
+        // Assembled: full tile outlines whose brightness traces the portrait.
+        vec2 p=gl_PointCoord;
+        float edge=min(min(p.x,1.-p.x),min(p.y,1.-p.y));
+        float w=mix(.07,.04,solid);
+        float stroke=1.-smoothstep(w,w+fwidth(edge),edge);
+        vec2 c=abs(p-.5);
+        stroke*=mix(step(.26,min(c.x,c.y)),1.,solid);
+        float r=length(p-.5);
+        float core=(1.-smoothstep(.07,.07+fwidth(r),r))*(1.-solid);
+        float a=max(stroke,core*.9);
+        if(a<.05) discard;
+        vec3 hue=mix(vec3(.72,.58,1.),vec3(.45,.85,.98),tint);
+        hue=mix(hue*.6,hue*1.2,light);
+        float lum=dot(texture(portrait,photoUV).rgb,vec3(.299,.587,.114));
+        vec3 ink=mix(hue,mix(hue,vec3(1.),lum*.6),solid);
+        float fade=mix(.2+.8*light*(1.-rim*.4),.3+.7*lum,solid);
+        color=vec4(ink,a*fade);
         return;
       }
       if(solid>0. && max(abs(delta.x),abs(delta.y))<=tileSize*.5) {
@@ -60,11 +80,15 @@ export function createAsciiRenderer(canvas) {
         color=vec4(texture(portrait,uv).rgb,1.);
       } else if(glyphSize>.1 && max(abs(delta.x),abs(delta.y))<=glyphSize*.5) {
         vec2 uv=delta/glyphSize+.5;
-          float glyph=clamp(floor(light*7.+sin(phase*2.2+photoUV.x*18.+photoUV.y*13.)*.7),0.,7.);
+        // Dense glyphs on the lit front, light glyphs toward the silhouette and back.
+        float density=light*(1.-rim*.75);
+        float glyph=clamp(floor(density*7.+sin(phase*2.2+photoUV.x*18.+photoUV.y*13.)*.7),0.,7.);
         float alpha=texture(glyphAtlas,vec2((glyph+uv.x)/8.,uv.y)).a;
         if(alpha<.1) discard;
-        vec3 ink=mix(vec3(.718,.627,1.),texture(portrait,photoUV).rgb,morph);
-        color=vec4(ink,alpha);
+        vec3 hue=mix(vec3(.72,.58,1.),vec3(.45,.85,.98),tint);
+        hue=mix(hue*.55,hue*1.15+.05,light);
+        vec3 ink=mix(hue,texture(portrait,photoUV).rgb,morph);
+        color=vec4(ink,alpha*mix(.3+.7*light,1.,morph));
       } else discard;
     }`;
   const shaders = [];
